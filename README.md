@@ -6,17 +6,9 @@
 
 ---
 
-## Deskripsi Project
-
-Aplikasi Flutter sederhana yang mendemonstrasikan cara passing (mengirim) data dari form input ke halaman tampilan. User bisa input nama, NIM, dan tahun lahir, lalu data tersebut akan ditampilkan di halaman berikutnya dengan tampilan yang menarik.
-
----
-
 ## Penjelasan Proses Passing Data
 
-### 1. Persiapan di FormData (form_data.dart)
-
-Pertama, kita bikin controller untuk nangkap data yang user input:
+Proses passing data dalam Flutter dilakukan dengan cara mengirimkan nilai dari satu halaman ke halaman lain melalui parameter konstruktor. Pertama-tama, dibuat beberapa controller untuk menampung data yang diinput pengguna, seperti berikut:
 
 ```dart
 final _nama = TextEditingController();
@@ -24,119 +16,72 @@ final _nim = TextEditingController();
 final _tahunLahir = TextEditingController();
 ```
 
-Controller ini kayak wadah yang nyimpen apa yang user ketik di form.
-
-### 2. Ambil Data dari Form
-
-Setelah user ngisi form dan tekan tombol "Simpan", kita ambil datanya pake `.text`:
+Controller ini berfungsi sebagai wadah sementara yang menyimpan teks yang diketik di form. Setelah pengguna mengisi form dan menekan tombol Simpan, data yang dimasukkan dapat diambil menggunakan properti .text dari masing-masing controller:
 
 ```dart
-_nama.text          // Ambil data nama
-_nim.text           // Ambil data NIM
-_tahunLahir.text    // Ambil data tahun lahir
+_nama.text;          // Mengambil data nama
+_nim.text;           // Mengambil data NIM
+_tahunLahir.text;    // Mengambil data tahun lahir
 ```
 
-### 3. Kirim Data ke Halaman Berikutnya
-
-Nah ini bagian pentingnya! Kita pake `Navigator.push()` untuk pindah halaman sekaligus kirim data:
+Kemudian, data tersebut dikirim ke halaman lain menggunakan Navigator.push(). Pada bagian ini, MaterialPageRoute digunakan untuk menentukan halaman tujuan, dan data dikirim melalui parameter konstruktor dari kelas tujuan (TampilData):
 
 ```dart
 Navigator.push(
   context,
   MaterialPageRoute(
     builder: (_) => TampilData(
-      nama: _nama.text,           // Kirim data nama
-      nim: _nim.text,             // Kirim data NIM
-      tahunLahir: _tahunLahir.text, // Kirim data tahun lahir
+      nama: _nama.text,
+      nim: _nim.text,
+      tahunLahir: _tahunLahir.text,
     ),
   ),
 );
 ```
 
-Jadi kita passing data lewat **parameter constructor** class `TampilData`.
-
-### 4. Terima Data di TampilData (tampil_data.dart)
-
-Di halaman tujuan, kita bikin variable untuk terima datanya:
+Di halaman penerima, yaitu tampil_data.dart, kelas TampilData harus memiliki variabel yang digunakan untuk menampung data yang dikirim. Variabel-variabel tersebut dideklarasikan sebagai parameter konstruktor dan ditandai dengan kata kunci required, yang berarti nilainya wajib dikirim:
 
 ```dart
 class TampilData extends StatelessWidget {
-  final String nama, nim, tahunLahir; // Variable penampung data
+  final String nama, nim, tahunLahir;
 
   const TampilData({
     Key? key,
-    required this.nama,        // Terima data nama
-    required this.nim,         // Terima data NIM
-    required this.tahunLahir,  // Terima data tahun lahir
+    required this.nama,
+    required this.nim,
+    required this.tahunLahir,
   }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Data Mahasiswa')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Nama: $nama'),
+            Text('NIM: $nim'),
+            Text('Tahun Lahir: $tahunLahir'),
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
 
-Keyword `required` artinya data ini **wajib** dikirim, gak boleh kosong.
-
-### 5. Tampilkan Data
-
-Setelah data diterima, tinggal ditampilin aja:
-
-```dart
-Text(nama)          // Tampilkan nama
-Text(nim)           // Tampilkan NIM
-Text('$umur tahun') // Tampilkan umur hasil hitung
-```
-
----
-
-## Alur Passing Data (Ringkasan)
-
-```
-FormData                          TampilData
-   |                                  |
-   | 1. User isi form                 |
-   | 2. Tekan tombol Simpan           |
-   | 3. Ambil data dari controller    |
-   |    (_nama.text, dll)             |
-   |                                  |
-   | 4. Navigator.push() -----------> | 5. Terima data via
-   |    kirim data lewat parameter    |    constructor
-   |                                  |
-   |                                  | 6. Tampilkan data
-   |                                  |    di widget Text
-```
-
----
-
-## Kesimpulan
-
-Cara passing data di Flutter itu simple:
-1. **Controller** untuk nangkap input user
-2. **Navigator.push()** untuk pindah halaman + kirim data
-3. **Constructor parameter** untuk terima data
-4. **Variable** untuk nyimpen data yang diterima
-5. **Widget** untuk tampilkan data
-
-Gak ribet kok, intinya data dari halaman A dikirim lewat parameter pas pindah ke halaman B. Kayak kirim paket, si pengirim (FormData) kasih paket, si penerima (TampilData) terima dan buka paketnya! 📦
-
----
-
-## Cara Menjalankan
-
-```bash
-flutter run
-```
-
+Setelah data diterima, nilainya dapat langsung ditampilkan menggunakan widget Text() sesuai kebutuhan.
 ---
 
 ## Screenshot
 
-*(Tambahkan screenshot aplikasi disini jika diperlukan)*
+<h3>📸 Screenshoot Aplikasi</h3>
+
+<p align="center">
+  <img src="screenshoot/ss_form_data.jpg" alt="Form Data" width="45%">
+  <img src="screenshoot/ss_tampil_data.jpg" alt="Tampil Data" width="45%">
+</p>
 
 ---
-
-## Teknologi yang Digunakan
-
-- Flutter SDK
-- Dart
-- Material Design
-
----
-
-Dibuat dengan ❤️ untuk Tugas Pemrograman Mobile
